@@ -41,8 +41,8 @@ public class SeedRepository : ISeedRepository
         var authorsSeed = seedData.Authors.ToList();
         var storesSeed = seedData.Stores.ToList();
         var booksSeed = seedData.Books.ToList();
-        var bookAuthorsSeed = seedData.BookAuthors.ToList();
-        var storeBooksSeed = seedData.StoreBooks.ToList();
+        var bookAuthorsSeed = seedData.BookAuthor.ToList();
+        var storeBooksSeed = seedData.StoreBook.ToList();
 
         await _unitOfWork.ExecuteInTransactionAsync(async ct =>
         {
@@ -122,7 +122,7 @@ public class SeedRepository : ISeedRepository
         IReadOnlyCollection<SeedAuthor> Authors,
         IReadOnlyCollection<SeedStore> Stores,
         IReadOnlyCollection<SeedBook> Books,
-        IReadOnlyCollection<SeedBookAuthor> BookAuthors,
-        IReadOnlyCollection<SeedStoreBook> StoreBooks);
+        IReadOnlyCollection<SeedBookAuthor> BookAuthor,
+        IReadOnlyCollection<SeedStoreBook> StoreBook);
 }
 

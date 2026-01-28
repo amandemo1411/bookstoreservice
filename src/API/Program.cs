@@ -12,9 +12,14 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddMemoryCache();
 
-// Database configuration - SQLite
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
-                      ?? "Data Source=bookstore.db";
+// Database configuration - SQLite: use absolute path so the DB file is always in a known place
+var configuredCs = builder.Configuration.GetConnectionString("DefaultConnection") ?? "Data Source=bookstore.db";
+var dbPath = configuredCs.StartsWith("Data Source=", StringComparison.OrdinalIgnoreCase)
+    ? configuredCs["Data Source=".Length..].Trim()
+    : "bookstore.db";
+if (!Path.IsPathRooted(dbPath))
+    dbPath = Path.GetFullPath(Path.Combine(builder.Environment.ContentRootPath ?? AppContext.BaseDirectory, dbPath));
+var connectionString = $"Data Source={dbPath}";
 
 builder.Services.AddDbContext<BookStoreDbContext>(options =>
     options.UseSqlite(connectionString));
@@ -27,11 +32,16 @@ builder.Services.AddBookStoreServices();
 
 var app = builder.Build();
 
-// Ensure database is created on startup (for demo/dev)
+// Apply migrations on startup so InitialCreate (and __EFMigrationsHistory) exist in the database
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<BookStoreDbContext>();
-    db.Database.EnsureCreated();
+    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+
+    await db.Database.MigrateAsync();
+    logger.LogInformation(
+        "SQLite database path: {DbPath}. Migrations applied. Open this file in DB Browser to see __EFMigrationsHistory and tables.",
+        dbPath);
 }
 
 // Configure the HTTP request pipeline.

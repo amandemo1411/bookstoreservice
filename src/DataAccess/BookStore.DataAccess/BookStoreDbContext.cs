@@ -30,12 +30,14 @@ public class BookStoreDbContext : DbContext
             }
         }
 
-        // audit log for write/update/delete
+        // audit log for write/update/delete — materialize before AddRange to avoid
+        // "Collection was modified; enumeration operation may not execute." when adding to context
         var auditEntries = ChangeTracker.Entries()
             .Where(e => e.Entity is BaseEntity && (e.State == EntityState.Added || e.State == EntityState.Modified || e.State == EntityState.Deleted))
             .Select(e => CreateAuditLog(e))
             .Where(a => a is not null)
-            .Select(a => a!);
+            .Select(a => a!)
+            .ToList();
 
         AuditLogs.AddRange(auditEntries);
 
@@ -52,8 +54,11 @@ public class BookStoreDbContext : DbContext
             .HasIndex(a => new { a.FirstName, a.LastName })
             .IsUnique();
 
-        modelBuilder.Entity<BookAuthor>()
-            .HasKey(x => new { x.BookId, x.AuthorId });
+        modelBuilder.Entity<BookAuthor>(e =>
+        {
+            e.ToTable("BookAuthor");
+            e.HasKey(x => new { x.BookId, x.AuthorId });
+        });
 
         modelBuilder.Entity<BookAuthor>()
             .HasOne(x => x.Book)
@@ -65,8 +70,11 @@ public class BookStoreDbContext : DbContext
             .WithMany(a => a.BookAuthors)
             .HasForeignKey(x => x.AuthorId);
 
-        modelBuilder.Entity<StoreBook>()
-            .HasKey(x => new { x.StoreId, x.BookId });
+        modelBuilder.Entity<StoreBook>(e =>
+        {
+            e.ToTable("StoreBook");
+            e.HasKey(x => new { x.StoreId, x.BookId });
+        });
 
         modelBuilder.Entity<StoreBook>()
             .HasOne(x => x.Store)

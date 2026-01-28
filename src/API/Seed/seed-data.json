@@ -21,11 +21,11 @@
       "description": "Classic romance."
     }
   ],
-  "bookAuthors": [
+  "bookAuthor": [
     { "bookId": "book1", "authorId": "author1" },
     { "bookId": "book2", "authorId": "author2" }
   ],
-  "storeBooks": [
+  "storeBook": [
     { "storeId": "store1", "bookId": "book1", "quantity": 5 },
     { "storeId": "store1", "bookId": "book2", "quantity": 3 },
     { "storeId": "store2", "bookId": "book2", "quantity": 2 }
