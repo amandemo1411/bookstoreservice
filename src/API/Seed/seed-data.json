@@ -1,0 +1,34 @@
+{
+  "authors": [
+    { "id": "author1", "firstName": "George", "lastName": "Orwell" },
+    { "id": "author2", "firstName": "Jane", "lastName": "Austen" }
+  ],
+  "stores": [
+    { "id": "store1", "name": "Central Bookstore", "location": "Downtown" },
+    { "id": "store2", "name": "Neighborhood Books", "location": "Suburbs" }
+  ],
+  "books": [
+    {
+      "id": "book1",
+      "isbn": "9780451524935",
+      "title": "1984",
+      "description": "Dystopian novel."
+    },
+    {
+      "id": "book2",
+      "isbn": "9780141439518",
+      "title": "Pride and Prejudice",
+      "description": "Classic romance."
+    }
+  ],
+  "bookAuthors": [
+    { "bookId": "book1", "authorId": "author1" },
+    { "bookId": "book2", "authorId": "author2" }
+  ],
+  "storeBooks": [
+    { "storeId": "store1", "bookId": "book1", "quantity": 5 },
+    { "storeId": "store1", "bookId": "book2", "quantity": 3 },
+    { "storeId": "store2", "bookId": "book2", "quantity": 2 }
+  ]
+}
+
